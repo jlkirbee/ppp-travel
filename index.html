@@ -16,7 +16,12 @@
       --line-strong: rgba(29, 26, 22, 0.16);
       --green: rgba(142, 176, 122, 0.2);
       --yellow: rgba(210, 188, 120, 0.22);
+      --orange: rgba(207, 156, 98, 0.22);
       --red: rgba(203, 128, 112, 0.22);
+      --green-strong: #6f9b56;
+      --yellow-strong: #c1a14c;
+      --orange-strong: #c8884a;
+      --red-strong: #b55d52;
     }
 
     * {
@@ -68,6 +73,35 @@
       margin-top: 26px;
     }
 
+    .mobile-sort {
+      display: none;
+      gap: 10px;
+      align-items: center;
+      width: 100%;
+    }
+
+    .mobile-sort select,
+    .mobile-sort button {
+      background: #ffffff;
+      border: 1px solid var(--line-strong);
+      color: var(--text);
+      border-radius: 10px;
+      padding: 10px 12px;
+      font-size: 0.95rem;
+      outline: none;
+      box-shadow: 0 1px 0 rgba(29, 26, 22, 0.04);
+    }
+
+    .mobile-sort select {
+      flex: 1 1 220px;
+    }
+
+    .mobile-sort button {
+      flex: 0 0 auto;
+      letter-spacing: 0.02em;
+      font-weight: 600;
+    }
+
     .search {
       flex: 1 1 320px;
       background: #ffffff;
@@ -110,6 +144,141 @@
       border: 1px solid var(--line-strong);
       border-radius: 14px;
       box-shadow: 0 14px 40px rgba(29, 26, 22, 0.08);
+    }
+
+    .cards {
+      display: none;
+      flex-direction: column;
+      gap: 18px;
+      margin-top: 16px;
+    }
+
+    .card {
+      position: relative;
+      background: var(--card);
+      border: 1px solid var(--line-strong);
+      border-radius: 16px;
+      padding: 18px 18px 16px 22px;
+      box-shadow: 0 12px 30px rgba(29, 26, 22, 0.08);
+      overflow: hidden;
+    }
+
+    .card::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 6px;
+      background: var(--accent);
+    }
+
+    .card.quartile-low::before {
+      background: var(--green-strong);
+    }
+
+    .card.quartile-mid::before {
+      background: var(--yellow-strong);
+    }
+
+    .card.quartile-mid-high::before {
+      background: var(--orange-strong);
+    }
+
+    .card.quartile-high::before {
+      background: var(--red-strong);
+    }
+
+    .card-top {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .card-rank {
+      font-size: 0.85rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .card-country {
+      font-size: 1.05rem;
+      font-weight: 600;
+      margin-top: 4px;
+    }
+
+    .card-total {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: #5f4b32;
+      white-space: nowrap;
+      text-align: right;
+    }
+
+    .card-total span {
+      display: block;
+      font-size: 0.8rem;
+      color: var(--muted);
+      font-weight: 500;
+      margin-top: 2px;
+    }
+
+    .card-city {
+      margin-top: 10px;
+      font-size: 0.95rem;
+      color: var(--muted);
+    }
+
+    details.card-details {
+      margin-top: 12px;
+      border-top: 1px solid var(--line);
+      padding-top: 10px;
+    }
+
+    details.card-details summary {
+      list-style: none;
+      cursor: pointer;
+      font-weight: 600;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      user-select: none;
+    }
+
+    details.card-details summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .detail-toggle {
+      font-size: 0.85rem;
+      color: var(--muted);
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .detail-list {
+      margin: 12px 0 0;
+      padding: 0;
+      list-style: none;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px 16px;
+      font-size: 0.92rem;
+    }
+
+    .detail-list li {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      color: var(--text);
+    }
+
+    .detail-list span {
+      color: var(--muted);
     }
 
     .table-scroll {
@@ -160,6 +329,10 @@
       background: var(--yellow);
     }
 
+    tbody tr.quartile-mid-high {
+      background: var(--orange);
+    }
+
     tbody tr.quartile-high {
       background: var(--red);
     }
@@ -197,15 +370,27 @@
       }
 
       .table-wrap {
-        border-radius: 12px;
+        display: none;
       }
 
-      table {
-        font-size: 0.8rem;
+      .cards {
+        display: flex;
       }
 
-      tbody td, thead th {
-        padding: 9px 8px;
+      .mobile-sort {
+        display: flex;
+      }
+
+      .legend {
+        width: 100%;
+      }
+
+      details.card-details {
+        border-top: 1px solid var(--line-strong);
+      }
+
+      .detail-list {
+        grid-template-columns: 1fr;
       }
     }
   </style>
@@ -219,9 +404,28 @@
       </p>
       <div class="controls">
         <input class="search" id="search" type="text" placeholder="Search country or city…" />
+        <div class="mobile-sort" id="mobile-sort">
+          <select id="mobile-sort-key" aria-label="Sort by">
+            <option value="rank">Rank</option>
+            <option value="total">Total daily</option>
+            <option value="hotel">Hotel</option>
+            <option value="country">Country</option>
+            <option value="city">City</option>
+            <option value="breakfast">Breakfast</option>
+            <option value="coffee">Coffee/tea</option>
+            <option value="attraction1">Attraction</option>
+            <option value="transport">Transport</option>
+            <option value="lunch">Lunch</option>
+            <option value="attraction2">2nd activity</option>
+            <option value="dinner">Dinner</option>
+            <option value="nightlife">Nightlife</option>
+          </select>
+          <button id="mobile-sort-dir" type="button" aria-label="Toggle sort direction">Asc</button>
+        </div>
         <div class="legend">
           <span><i class="dot" style="background: var(--green)"></i> Cheapest quartile</span>
-          <span><i class="dot" style="background: var(--yellow)"></i> Middle quartiles</span>
+          <span><i class="dot" style="background: var(--yellow)"></i> Lower middle quartile</span>
+          <span><i class="dot" style="background: var(--orange)"></i> Upper middle quartile</span>
           <span><i class="dot" style="background: var(--red)"></i> Most expensive quartile</span>
         </div>
       </div>
@@ -253,6 +457,7 @@
           </table>
         </div>
       </div>
+      <div class="cards" id="cards"></div>
     </div>
   </main>
   <footer>
@@ -427,11 +632,16 @@
     let sortDir = "asc";
 
     const tbody = document.querySelector("#cost-table tbody");
+    const cards = document.getElementById("cards");
+    const mobileSortKey = document.getElementById("mobile-sort-key");
+    const mobileSortDir = document.getElementById("mobile-sort-dir");
+    const mobileQuery = window.matchMedia("(max-width: 720px)");
 
     const sortRows = () => {
       rows.sort((a, b) => {
-        const aVal = a[sortKey];
-        const bVal = b[sortKey];
+        const key = sortKey === "rank" ? "total" : sortKey;
+        const aVal = a[key];
+        const bVal = b[key];
         if (typeof aVal === "string") {
           return sortDir === "asc" ? aVal.localeCompare(bVal) : bVal.localeCompare(aVal);
         }
@@ -442,18 +652,26 @@
     const applyQuartiles = (list) => {
       const sorted = [...list].sort((a, b) => a.total - b.total);
       const q1 = sorted[Math.floor(sorted.length * 0.25)].total;
+      const q2 = sorted[Math.floor(sorted.length * 0.5)].total;
       const q3 = sorted[Math.floor(sorted.length * 0.75)].total;
-      return { q1, q3 };
+      return { q1, q2, q3 };
     };
 
-    const render = () => {
+    const renderTable = () => {
       sortRows();
-      const { q1, q3 } = applyQuartiles(rows);
+      const { q1, q2, q3 } = applyQuartiles(rows);
       tbody.innerHTML = "";
 
       rows.forEach((row, index) => {
         const tr = document.createElement("tr");
-        const quartileClass = row.total <= q1 ? "quartile-low" : row.total >= q3 ? "quartile-high" : "quartile-mid";
+        const quartileClass =
+          row.total <= q1
+            ? "quartile-low"
+            : row.total <= q2
+              ? "quartile-mid"
+              : row.total <= q3
+                ? "quartile-mid-high"
+                : "quartile-high";
         tr.className = quartileClass;
 
         const cells = [
@@ -483,6 +701,73 @@
       });
     };
 
+    const renderCards = () => {
+      sortRows();
+      const { q1, q2, q3 } = applyQuartiles(rows);
+      cards.innerHTML = "";
+
+      rows.forEach((row, index) => {
+        const card = document.createElement("article");
+        const quartileClass =
+          row.total <= q1
+            ? "quartile-low"
+            : row.total <= q2
+              ? "quartile-mid"
+              : row.total <= q3
+                ? "quartile-mid-high"
+                : "quartile-high";
+        card.className = `card ${quartileClass}`;
+
+        card.innerHTML = `
+          <div class="card-top">
+            <div>
+              <div class="card-rank">Rank ${index + 1}</div>
+              <div class="card-country">${row.flag} ${row.country}</div>
+            </div>
+            <div class="card-total">${money(row.total)}<span>Total / day</span></div>
+          </div>
+          <div class="card-city">${row.city}</div>
+          <details class="card-details">
+            <summary>
+              Details
+              <span class="detail-toggle">Tap to expand</span>
+            </summary>
+            <ul class="detail-list">
+              <li><span>Hotel</span>${money(row.hotel)}</li>
+              <li><span>Breakfast</span>${money(row.breakfast)}</li>
+              <li><span>Coffee</span>${money(row.coffee)}</li>
+              <li><span>Attraction</span>${money(row.attraction1)}</li>
+              <li><span>Transport</span>${money(row.transport)}</li>
+              <li><span>Lunch</span>${money(row.lunch)}</li>
+              <li><span>2nd activity</span>${money(row.attraction2)}</li>
+              <li><span>Dinner</span>${money(row.dinner)}</li>
+              <li><span>Nightlife</span>${money(row.nightlife)}</li>
+            </ul>
+          </details>
+        `;
+
+        cards.appendChild(card);
+      });
+    };
+
+    const updateMobileSortControls = () => {
+      if (mobileSortKey.querySelector(`option[value="${sortKey}"]`)) {
+        mobileSortKey.value = sortKey;
+      } else {
+        mobileSortKey.value = "total";
+      }
+      mobileSortDir.textContent = sortDir === "asc" ? "Asc" : "Desc";
+    };
+
+    const renderView = () => {
+      if (mobileQuery.matches) {
+        renderCards();
+      } else {
+        renderTable();
+      }
+      updateMobileSortControls();
+    };
+
     document.querySelectorAll("thead th").forEach((th) => {
       th.addEventListener("click", () => {
         const key = th.dataset.key;
@@ -493,8 +778,20 @@
           sortKey = key;
           sortDir = key === "country" || key === "city" ? "asc" : "asc";
         }
-        render();
+        renderView();
       });
+    });
+
+    mobileSortKey.addEventListener("change", (event) => {
+      sortKey = event.target.value;
+      sortDir = sortKey === "country" || sortKey === "city" ? "asc" : sortDir;
+      renderView();
+    });
+
+    mobileSortDir.addEventListener("click", () => {
+      sortDir = sortDir === "asc" ? "desc" : "asc";
+      updateMobileSortControls();
+      renderView();
     });
 
     document.getElementById("search").addEventListener("input", (event) => {
@@ -502,10 +799,11 @@
       rows = destinations
         .map(computeCosts)
         .filter((row) => row.country.toLowerCase().includes(term) || row.city.toLowerCase().includes(term));
-      render();
+      renderView();
     });
 
-    render();
+    mobileQuery.addEventListener("change", renderView);
+    renderView();
   </script>
 </body>
 </html>
