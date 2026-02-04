@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Where does your dollar go furthest?</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0b1020;
+      --bg-2: #101728;
+      --card: rgba(255, 255, 255, 0.06);
+      --text: #eef2ff;
+      --muted: #cbd5f5;
+      --accent: #7dd3fc;
+      --accent-2: #a7f3d0;
+      --line: rgba(255, 255, 255, 0.12);
+      --green: rgba(34, 197, 94, 0.18);
+      --yellow: rgba(253, 224, 71, 0.18);
+      --red: rgba(244, 63, 94, 0.18);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: radial-gradient(circle at top, #1b2545, var(--bg)) no-repeat fixed;
+      color: var(--text);
+      font-family: "Work Sans", system-ui, -apple-system, sans-serif;
+    }
+
+    header {
+      padding: 48px 24px 24px;
+      background: linear-gradient(135deg, rgba(125, 211, 252, 0.2), rgba(167, 243, 208, 0.06));
+      border-bottom: 1px solid var(--line);
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      font-family: "Space Grotesk", system-ui, sans-serif;
+      font-size: clamp(2.2rem, 3.5vw, 3.6rem);
+      margin: 0 0 12px;
+      letter-spacing: -0.02em;
+    }
+
+    .subtitle {
+      font-size: clamp(1rem, 1.2vw, 1.2rem);
+      color: var(--muted);
+      max-width: 820px;
+      line-height: 1.6;
+      margin: 0;
+    }
+
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+      margin-top: 20px;
+    }
+
+    .search {
+      flex: 1 1 320px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid var(--line);
+      color: var(--text);
+      border-radius: 12px;
+      padding: 12px 14px;
+      font-size: 1rem;
+      outline: none;
+    }
+
+    .legend {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+
+    .legend span {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 999px;
+      display: inline-block;
+    }
+
+    main {
+      padding: 24px;
+    }
+
+    .table-wrap {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 10px 35px rgba(0, 0, 0, 0.25);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.95rem;
+    }
+
+    thead th {
+      position: sticky;
+      top: 0;
+      background: #121a32;
+      color: var(--muted);
+      text-align: left;
+      padding: 12px 10px;
+      border-bottom: 1px solid var(--line);
+      cursor: pointer;
+      user-select: none;
+      white-space: nowrap;
+    }
+
+    thead th:hover {
+      color: var(--text);
+    }
+
+    tbody td {
+      padding: 10px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      white-space: nowrap;
+    }
+
+    tbody tr:last-child td {
+      border-bottom: none;
+    }
+
+    tbody tr.quartile-low {
+      background: var(--green);
+    }
+
+    tbody tr.quartile-mid {
+      background: var(--yellow);
+    }
+
+    tbody tr.quartile-high {
+      background: var(--red);
+    }
+
+    td.total {
+      font-weight: 700;
+      font-size: 1.05rem;
+      color: #fef9c3;
+    }
+
+    .muted {
+      color: var(--muted);
+    }
+
+    footer {
+      padding: 24px;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    @media (max-width: 900px) {
+      thead th, tbody td {
+        padding: 10px 8px;
+        font-size: 0.85rem;
+      }
+    }
+
+    @media (max-width: 720px) {
+      header {
+        padding: 32px 16px 18px;
+      }
+
+      main {
+        padding: 16px;
+      }
+
+      .table-wrap {
+        border-radius: 12px;
+      }
+
+      table {
+        font-size: 0.8rem;
+      }
+
+      tbody td, thead th {
+        padding: 8px 6px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container">
+      <h1>Where does your dollar go furthest?</h1>
+      <p class="subtitle">
+        A global mid-range travel price map built around real cost-of-living indexes and mid-range tourist spending patterns. Sort by any column to find the best PPP value for a full day of travel comfort.
+      </p>
+      <div class="controls">
+        <input class="search" id="search" type="text" placeholder="Search country or city…" />
+        <div class="legend">
+          <span><i class="dot" style="background: var(--green)"></i> Cheapest quartile</span>
+          <span><i class="dot" style="background: var(--yellow)"></i> Middle quartiles</span>
+          <span><i class="dot" style="background: var(--red)"></i> Most expensive quartile</span>
+        </div>
+      </div>
+    </div>
+  </header>
+  <main>
+    <div class="container">
+      <div class="table-wrap">
+        <table id="cost-table">
+          <thead>
+            <tr>
+              <th data-key="rank">Rank</th>
+              <th data-key="country">Country</th>
+              <th data-key="city">Most popular tourist city</th>
+              <th data-key="hotel">4-star hotel</th>
+              <th data-key="breakfast">Breakfast</th>
+              <th data-key="coffee">Coffee/tea</th>
+              <th data-key="attraction1">Attraction</th>
+              <th data-key="transport">Daily transport</th>
+              <th data-key="lunch">Lunch</th>
+              <th data-key="attraction2">2nd activity</th>
+              <th data-key="dinner">Dinner</th>
+              <th data-key="nightlife">Nightlife</th>
+              <th data-key="total">Total daily</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+  <footer>
+    <div class="container">
+      Data is approximate and intended for quick comparisons. Mid-range tourist spending model scaled to Numbeo's Feb 2026 cost-of-living indexes. Values shown in USD.
+    </div>
+  </footer>
+
+  <script>
+    const base = {
+      hotel: 180,
+      breakfast: 15,
+      coffee: 5,
+      attraction1: 22,
+      transport: 45,
+      lunch: 22,
+      attraction2: 28,
+      dinner: 38,
+      nightlife: 24,
+    };
+
+    const usIndex = {
+      col: 68.8,
+      colPlusRent: 56.3,
+      restaurant: 72.8,
+    };
+
+    const destinations = [
+      { country: "United States", flag: "🇺🇸", city: "New York City", col: 68.8, colPlusRent: 56.3, restaurant: 72.8 },
+      { country: "Canada", flag: "🇨🇦", city: "Toronto", col: 63.0, colPlusRent: 48.9, restaurant: 64.1 },
+      { country: "Mexico", flag: "🇲🇽", city: "Mexico City", col: 42.6, colPlusRent: 31.5, restaurant: 43.6 },
+      { country: "Bahamas", flag: "🇧🇸", city: "Nassau", col: 98.8, colPlusRent: 77.1, restaurant: 109.0 },
+      { country: "Dominican Republic", flag: "🇩🇴", city: "Punta Cana", col: 38.2, colPlusRent: 27.4, restaurant: 35.9 },
+      { country: "Jamaica", flag: "🇯🇲", city: "Montego Bay", col: 54.5, colPlusRent: 38.7, restaurant: 46.8 },
+      { country: "Cuba", flag: "🇨🇺", city: "Havana", col: 41.8, colPlusRent: 28.3, restaurant: 26.3 },
+      { country: "Costa Rica", flag: "🇨🇷", city: "San Jose", col: 52.9, colPlusRent: 38.3, restaurant: 47.5 },
+      { country: "Panama", flag: "🇵🇦", city: "Panama City", col: 45.5, colPlusRent: 35.6, restaurant: 42.9 },
+      { country: "Guatemala", flag: "🇬🇹", city: "Antigua", col: 40.4, colPlusRent: 29.5, restaurant: 38.8 },
+      { country: "El Salvador", flag: "🇸🇻", city: "San Salvador", col: 39.6, colPlusRent: 29.4, restaurant: 34.4 },
+      { country: "Honduras", flag: "🇭🇳", city: "Roatan", col: 36.6, colPlusRent: 25.7, restaurant: 34.1 },
+      { country: "Nicaragua", flag: "🇳🇮", city: "Granada", col: 34.2, colPlusRent: 22.5, restaurant: 26.0 },
+      { country: "Belize", flag: "🇧🇿", city: "Ambergris Caye", col: 46.9, colPlusRent: 32.0, restaurant: 39.3 },
+      { country: "Colombia", flag: "🇨🇴", city: "Cartagena", col: 31.7, colPlusRent: 22.4, restaurant: 27.0 },
+      { country: "Peru", flag: "🇵🇪", city: "Cusco", col: 33.5, colPlusRent: 23.6, restaurant: 28.3 },
+      { country: "Chile", flag: "🇨🇱", city: "Santiago", col: 39.0, colPlusRent: 26.8, restaurant: 39.7 },
+      { country: "Argentina", flag: "🇦🇷", city: "Buenos Aires", col: 41.3, colPlusRent: 28.3, restaurant: 47.9 },
+      { country: "Uruguay", flag: "🇺🇾", city: "Montevideo", col: 55.6, colPlusRent: 37.3, restaurant: 59.6 },
+      { country: "Brazil", flag: "🇧🇷", city: "Rio de Janeiro", col: 30.1, colPlusRent: 20.5, restaurant: 26.0 },
+      { country: "Ecuador", flag: "🇪🇨", city: "Quito", col: 30.9, colPlusRent: 21.0, restaurant: 27.0 },
+      { country: "Bolivia", flag: "🇧🇴", city: "La Paz", col: 27.3, colPlusRent: 19.0, restaurant: 22.2 },
+      { country: "Paraguay", flag: "🇵🇾", city: "Asuncion", col: 28.5, colPlusRent: 20.3, restaurant: 26.4 },
+      { country: "Venezuela", flag: "🇻🇪", city: "Caracas", col: 37.7, colPlusRent: 24.0, restaurant: 40.7 },
+      { country: "Trinidad and Tobago", flag: "🇹🇹", city: "Port of Spain", col: 52.0, colPlusRent: 35.2, restaurant: 47.4 },
+      { country: "Guyana", flag: "🇬🇾", city: "Georgetown", col: 50.4, colPlusRent: 39.0, restaurant: 53.8 },
+      { country: "Suriname", flag: "🇸🇷", city: "Paramaribo", col: 42.3, colPlusRent: 28.2, restaurant: 39.9 },
+      { country: "Iceland", flag: "🇮🇸", city: "Reykjavik", col: 97.2, colPlusRent: 75.9, restaurant: 104.9 },
+      { country: "Ireland", flag: "🇮🇪", city: "Dublin", col: 70.6, colPlusRent: 58.7, restaurant: 76.6 },
+      { country: "United Kingdom", flag: "🇬🇧", city: "London", col: 67.8, colPlusRent: 51.9, restaurant: 72.9 },
+      { country: "France", flag: "🇫🇷", city: "Paris", col: 67.7, colPlusRent: 47.5, restaurant: 66.2 },
+      { country: "Spain", flag: "🇪🇸", city: "Barcelona", col: 51.6, colPlusRent: 39.0, restaurant: 55.1 },
+      { country: "Portugal", flag: "🇵🇹", city: "Lisbon", col: 48.8, colPlusRent: 38.3, restaurant: 45.6 },
+      { country: "Italy", flag: "🇮🇹", city: "Rome", col: 61.4, colPlusRent: 43.1, restaurant: 64.7 },
+      { country: "Germany", flag: "🇩🇪", city: "Berlin", col: 68.7, colPlusRent: 49.0, restaurant: 66.9 },
+      { country: "Netherlands", flag: "🇳🇱", city: "Amsterdam", col: 73.4, colPlusRent: 57.9, restaurant: 81.6 },
+      { country: "Belgium", flag: "🇧🇪", city: "Brussels", col: 68.6, colPlusRent: 48.6, restaurant: 80.7 },
+      { country: "Switzerland", flag: "🇨🇭", city: "Zurich", col: 110.7, colPlusRent: 84.3, restaurant: 111.3 },
+      { country: "Austria", flag: "🇦🇹", city: "Vienna", col: 71.3, colPlusRent: 50.7, restaurant: 71.5 },
+      { country: "Denmark", flag: "🇩🇰", city: "Copenhagen", col: 78.9, colPlusRent: 56.6, restaurant: 93.7 },
+      { country: "Norway", flag: "🇳🇴", city: "Oslo", col: 83.7, colPlusRent: 59.4, restaurant: 88.6 },
+      { country: "Sweden", flag: "🇸🇪", city: "Stockholm", col: 68.0, colPlusRent: 47.8, restaurant: 70.8 },
+      { country: "Finland", flag: "🇫🇮", city: "Helsinki", col: 69.0, colPlusRent: 48.0, restaurant: 74.1 },
+      { country: "Poland", flag: "🇵🇱", city: "Krakow", col: 47.3, colPlusRent: 34.4, restaurant: 48.1 },
+      { country: "Czech Republic", flag: "🇨🇿", city: "Prague", col: 53.0, colPlusRent: 38.6, restaurant: 43.1 },
+      { country: "Slovakia", flag: "🇸🇰", city: "Bratislava", col: 49.6, colPlusRent: 35.2, restaurant: 43.3 },
+      { country: "Hungary", flag: "🇭🇺", city: "Budapest", col: 46.9, colPlusRent: 32.3, restaurant: 44.7 },
+      { country: "Romania", flag: "🇷🇴", city: "Bucharest", col: 40.6, colPlusRent: 27.8, restaurant: 43.5 },
+      { country: "Bulgaria", flag: "🇧🇬", city: "Sofia", col: 41.6, colPlusRent: 28.0, restaurant: 42.6 },
+      { country: "Greece", flag: "🇬🇷", city: "Athens", col: 54.0, colPlusRent: 36.0, restaurant: 59.2 },
+      { country: "Croatia", flag: "🇭🇷", city: "Dubrovnik", col: 52.4, colPlusRent: 37.1, restaurant: 55.3 },
+      { country: "Slovenia", flag: "🇸🇮", city: "Ljubljana", col: 54.1, colPlusRent: 39.1, restaurant: 51.3 },
+      { country: "Serbia", flag: "🇷🇸", city: "Belgrade", col: 42.6, colPlusRent: 29.5, restaurant: 42.2 },
+      { country: "Montenegro", flag: "🇲🇪", city: "Kotor", col: 42.7, colPlusRent: 31.0, restaurant: 44.8 },
+      { country: "Albania", flag: "🇦🇱", city: "Tirana", col: 45.8, colPlusRent: 31.7, restaurant: 43.5 },
+      { country: "Bosnia and Herzegovina", flag: "🇧🇦", city: "Sarajevo", col: 38.7, colPlusRent: 25.0, restaurant: 32.1 },
+      { country: "North Macedonia", flag: "🇲🇰", city: "Skopje", col: 35.5, colPlusRent: 23.2, restaurant: 29.1 },
+      { country: "Ukraine", flag: "🇺🇦", city: "Kyiv", col: 28.2, colPlusRent: 19.2, restaurant: 25.4 },
+      { country: "Russia", flag: "🇷🇺", city: "Moscow", col: 36.5, colPlusRent: 25.7, restaurant: 35.4 },
+      { country: "Turkey", flag: "🇹🇷", city: "Istanbul", col: 39.2, colPlusRent: 27.6, restaurant: 37.1 },
+      { country: "Georgia", flag: "🇬🇪", city: "Tbilisi", col: 33.1, colPlusRent: 24.0, restaurant: 36.2 },
+      { country: "Armenia", flag: "🇦🇲", city: "Yerevan", col: 40.9, colPlusRent: 29.5, restaurant: 40.3 },
+      { country: "Cyprus", flag: "🇨🇾", city: "Limassol", col: 58.8, colPlusRent: 44.6, restaurant: 60.9 },
+      { country: "Malta", flag: "🇲🇹", city: "Valletta", col: 56.8, colPlusRent: 44.1, restaurant: 64.1 },
+      { country: "Estonia", flag: "🇪🇪", city: "Tallinn", col: 59.7, colPlusRent: 40.5, restaurant: 64.9 },
+      { country: "Latvia", flag: "🇱🇻", city: "Riga", col: 52.3, colPlusRent: 34.3, restaurant: 54.6 },
+      { country: "Lithuania", flag: "🇱🇹", city: "Vilnius", col: 51.2, colPlusRent: 35.3, restaurant: 56.3 },
+      { country: "Andorra", flag: "🇦🇩", city: "Andorra la Vella", col: 55.1, colPlusRent: 45.2, restaurant: 56.1 },
+      { country: "Israel", flag: "🇮🇱", city: "Tel Aviv", col: 79.7, colPlusRent: 58.0, restaurant: 89.9 },
+      { country: "United Arab Emirates", flag: "🇦🇪", city: "Dubai", col: 55.2, colPlusRent: 48.2, restaurant: 56.5 },
+      { country: "Qatar", flag: "🇶🇦", city: "Doha", col: 50.4, colPlusRent: 45.8, restaurant: 55.4 },
+      { country: "Saudi Arabia", flag: "🇸🇦", city: "Riyadh", col: 43.9, colPlusRent: 30.4, restaurant: 34.5 },
+      { country: "Oman", flag: "🇴🇲", city: "Muscat", col: 43.6, colPlusRent: 30.0, restaurant: 41.8 },
+      { country: "Jordan", flag: "🇯🇴", city: "Amman", col: 39.4, colPlusRent: 25.3, restaurant: 40.7 },
+      { country: "Lebanon", flag: "🇱🇧", city: "Beirut", col: 41.7, colPlusRent: 29.5, restaurant: 44.2 },
+      { country: "Egypt", flag: "🇪🇬", city: "Cairo", col: 21.6, colPlusRent: 13.8, restaurant: 20.1 },
+      { country: "Morocco", flag: "🇲🇦", city: "Marrakesh", col: 31.4, colPlusRent: 21.1, restaurant: 25.0 },
+      { country: "Tunisia", flag: "🇹🇳", city: "Tunis", col: 29.1, colPlusRent: 18.5, restaurant: 17.9 },
+      { country: "South Africa", flag: "🇿🇦", city: "Cape Town", col: 37.1, colPlusRent: 26.4, restaurant: 35.6 },
+      { country: "Kenya", flag: "🇰🇪", city: "Nairobi", col: 28.9, colPlusRent: 19.5, restaurant: 25.9 },
+      { country: "Tanzania", flag: "🇹🇿", city: "Zanzibar City", col: 26.6, colPlusRent: 18.8, restaurant: 21.3 },
+      { country: "Uganda", flag: "🇺🇬", city: "Kampala", col: 27.0, colPlusRent: 19.6, restaurant: 25.1 },
+      { country: "Rwanda", flag: "🇷🇼", city: "Kigali", col: 25.0, colPlusRent: 19.4, restaurant: 21.9 },
+      { country: "Ghana", flag: "🇬🇭", city: "Accra", col: 33.9, colPlusRent: 23.7, restaurant: 35.2 },
+      { country: "Nigeria", flag: "🇳🇬", city: "Lagos", col: 27.7, colPlusRent: 25.5, restaurant: 21.0 },
+      { country: "Ethiopia", flag: "🇪🇹", city: "Addis Ababa", col: 41.8, colPlusRent: 31.3, restaurant: 22.9 },
+      { country: "Japan", flag: "🇯🇵", city: "Tokyo", col: 47.5, colPlusRent: 32.8, restaurant: 30.3 },
+      { country: "South Korea", flag: "🇰🇷", city: "Seoul", col: 61.6, colPlusRent: 41.3, restaurant: 35.8 },
+      { country: "China", flag: "🇨🇳", city: "Shanghai", col: 30.5, colPlusRent: 21.5, restaurant: 21.0 },
+      { country: "Taiwan", flag: "🇹🇼", city: "Taipei", col: 49.7, colPlusRent: 33.9, restaurant: 27.4 },
+      { country: "Hong Kong (China)", flag: "🇭🇰", city: "Hong Kong", col: 75.2, colPlusRent: 69.8, restaurant: 51.1 },
+      { country: "Singapore", flag: "🇸🇬", city: "Singapore", col: 87.7, colPlusRent: 81.2, restaurant: 55.5 },
+      { country: "Thailand", flag: "🇹🇭", city: "Bangkok", col: 38.0, colPlusRent: 27.2, restaurant: 25.0 },
+      { country: "Vietnam", flag: "🇻🇳", city: "Ho Chi Minh City", col: 26.4, colPlusRent: 19.1, restaurant: 15.6 },
+      { country: "Malaysia", flag: "🇲🇾", city: "Kuala Lumpur", col: 34.0, colPlusRent: 22.9, restaurant: 25.2 },
+      { country: "Indonesia", flag: "🇮🇩", city: "Bali", col: 26.1, colPlusRent: 18.5, restaurant: 15.3 },
+      { country: "Philippines", flag: "🇵🇭", city: "Manila", col: 30.1, colPlusRent: 20.2, restaurant: 19.7 },
+      { country: "Cambodia", flag: "🇰🇭", city: "Siem Reap", col: 34.8, colPlusRent: 23.7, restaurant: 25.4 },
+      { country: "Sri Lanka", flag: "🇱🇰", city: "Colombo", col: 33.9, colPlusRent: 22.0, restaurant: 24.3 },
+      { country: "Nepal", flag: "🇳🇵", city: "Kathmandu", col: 22.6, colPlusRent: 13.8, restaurant: 17.4 },
+      { country: "Bangladesh", flag: "🇧🇩", city: "Dhaka", col: 22.8, colPlusRent: 13.8, restaurant: 17.5 },
+      { country: "Pakistan", flag: "🇵🇰", city: "Lahore", col: 19.6, colPlusRent: 12.4, restaurant: 17.2 },
+      { country: "Australia", flag: "🇦🇺", city: "Sydney", col: 67.9, colPlusRent: 52.7, restaurant: 65.6 },
+      { country: "New Zealand", flag: "🇳🇿", city: "Auckland", col: 60.3, colPlusRent: 45.0, restaurant: 59.3 },
+      { country: "Fiji", flag: "🇫🇯", city: "Nadi", col: 34.3, colPlusRent: 26.7, restaurant: 32.5 },
+      { country: "Maldives", flag: "🇲🇻", city: "Male", col: 48.9, colPlusRent: 38.1, restaurant: 42.9 }
+    ];
+
+    const money = (value) => `$${value.toFixed(1)}`;
+
+    const computeCosts = (entry) => {
+      const hotel = base.hotel * (entry.colPlusRent / usIndex.colPlusRent);
+      const restaurantScale = entry.restaurant / usIndex.restaurant;
+      const costScale = entry.col / usIndex.col;
+
+      const breakfast = base.breakfast * restaurantScale;
+      const coffee = base.coffee * restaurantScale;
+      const lunch = base.lunch * restaurantScale;
+      const dinner = base.dinner * restaurantScale;
+      const nightlife = base.nightlife * restaurantScale;
+      const attraction1 = base.attraction1 * costScale;
+      const attraction2 = base.attraction2 * costScale;
+      const transport = base.transport * costScale;
+
+      const total = hotel + breakfast + coffee + lunch + dinner + nightlife + attraction1 + attraction2 + transport;
+
+      return {
+        ...entry,
+        hotel,
+        breakfast,
+        coffee,
+        attraction1,
+        transport,
+        lunch,
+        attraction2,
+        dinner,
+        nightlife,
+        total,
+      };
+    };
+
+    let rows = destinations.map(computeCosts);
+    let sortKey = "total";
+    let sortDir = "asc";
+
+    const tbody = document.querySelector("#cost-table tbody");
+
+    const sortRows = () => {
+      rows.sort((a, b) => {
+        const aVal = a[sortKey];
+        const bVal = b[sortKey];
+        if (typeof aVal === "string") {
+          return sortDir === "asc" ? aVal.localeCompare(bVal) : bVal.localeCompare(aVal);
+        }
+        return sortDir === "asc" ? aVal - bVal : bVal - aVal;
+      });
+    };
+
+    const applyQuartiles = (list) => {
+      const sorted = [...list].sort((a, b) => a.total - b.total);
+      const q1 = sorted[Math.floor(sorted.length * 0.25)].total;
+      const q3 = sorted[Math.floor(sorted.length * 0.75)].total;
+      return { q1, q3 };
+    };
+
+    const render = () => {
+      sortRows();
+      const { q1, q3 } = applyQuartiles(rows);
+      tbody.innerHTML = "";
+
+      rows.forEach((row, index) => {
+        const tr = document.createElement("tr");
+        const quartileClass = row.total <= q1 ? "quartile-low" : row.total >= q3 ? "quartile-high" : "quartile-mid";
+        tr.className = quartileClass;
+
+        const cells = [
+          index + 1,
+          `${row.flag} ${row.country}`,
+          row.city,
+          money(row.hotel),
+          money(row.breakfast),
+          money(row.coffee),
+          money(row.attraction1),
+          money(row.transport),
+          money(row.lunch),
+          money(row.attraction2),
+          money(row.dinner),
+          money(row.nightlife),
+          money(row.total),
+        ];
+
+        cells.forEach((value, i) => {
+          const td = document.createElement("td");
+          td.textContent = value;
+          if (i === cells.length - 1) td.classList.add("total");
+          tr.appendChild(td);
+        });
+
+        tbody.appendChild(tr);
+      });
+    };
+
+    document.querySelectorAll("thead th").forEach((th) => {
+      th.addEventListener("click", () => {
+        const key = th.dataset.key;
+        if (!key) return;
+        if (sortKey === key) {
+          sortDir = sortDir === "asc" ? "desc" : "asc";
+        } else {
+          sortKey = key;
+          sortDir = key === "country" || key === "city" ? "asc" : "asc";
+        }
+        render();
+      });
+    });
+
+    document.getElementById("search").addEventListener("input", (event) => {
+      const term = event.target.value.toLowerCase();
+      rows = destinations
+        .map(computeCosts)
+        .filter((row) => row.country.toLowerCase().includes(term) || row.city.toLowerCase().includes(term));
+      render();
+    });
+
+    render();
+  </script>
+</body>
+</html>
